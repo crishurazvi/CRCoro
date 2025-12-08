@@ -224,24 +224,22 @@ with tab4:
     # GENERATOR TEXT (FĂRĂ MARKDOWN)
     def generate_plain_text():
         lines = []
-        lines.append(f"PROTOCOL CORONAROGRAFIE {'SI ANGIOPLASTIE' if st.session_state.protocoale_pci else ''}")
-        lines.append(f"Laborator Cateterism Cardiac")
-        lines.append(f"Data: {data_proc.strftime('%d/%m/%Y')} | ID Procedura: {id_procedura}")
-        lines.append(f"Operator: {operator_selectat} | Secundar: {operator_secundar}")   
+        lines.append(f"PROTOCOL CORONAROGRAFIE {'SI ANGIOPLASTIE' if st.session_state.protocoale_pci else ''} - Laborator Cateterism Cardiac")
+        lines.append(f"Data: {data_proc.strftime('%d/%m/%Y')} | ID Procedura: {id_procedura} - {operator_selectat} | Secundar: {operator_secundar}")
+        lines.append("")
         
-        lines.append(f"Nume: {nume_pacient} | Varsta: {varsta} ani | FO: {fo}")
+        lines.append(f"Pacient: {nume_pacient} - Varsta: {varsta} ani - FO: {fo}")
         lines.append(f"Factori de Risc: {', '.join(risc) if risc else 'Negativi'}")
         lines.append(f"Indicatie: {indicatie}")
-        lines.append("")
-        lines.append(f"Abord: {abord} ({teaca})")
-        lines.append(f"Hemostaza: {hemostaza} {f'({staza_detalii})' if staza_detalii else ''}")
-        lines.append(f"Hemodinamica: TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
-        lines.append(f"Parametri: Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml")
+        lines.append(f"Abord: {abord} ({teaca}) - Hemostaza: {hemostaza} {f'({staza_detalii})' if staza_detalii else ''}")
+        lines.append(f"Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml - TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
         lines.append(f"Catetere: {catetere_dg}")
-        
+                lines.append("")
+
         lines.append("DESCRIERE ANGIOGRAFICA")
         lines.append(f"Dominanta: {dominanta}")
-        
+                lines.append("")
+
         if not lesion_data:
             lines.append("Fara leziuni semnificative angiografic pe segmentele analizate.")
         else:
