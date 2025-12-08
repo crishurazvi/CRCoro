@@ -246,10 +246,11 @@ with tab4:
             sorted_lesions = sorted(lesion_data.items()) 
             for key, data in sorted_lesions:
                 # key format: "Vas - Segment"
-                lines.append(f" - {key}: Leziune stenozanta {data['stenosis']}%, Tip {data['type']}. {data['desc']}")
-        
+                lines.append(f" - {key}: Leziune stenozanta {data['stenosis']}%, flux distal Tip {data['type']}. {data['desc']}")
+                lines.append("")
+
         if st.session_state.protocoale_pci:
-            lines.append("PROTOCOL ANGIOPLASTIE (PCI)")
+            lines.append("ANGIOPLASTIE (PCI):")
             for item in st.session_state.protocoale_pci:
                 lines.append(f"Protocol angioplastie {item['artera']}")
                 lines.append(f"{item['text']}")
