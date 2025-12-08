@@ -20,7 +20,7 @@ st.markdown("""
 
 # --- SESSION STATE (Memorie temporară) ---
 if 'lista_operatori' not in st.session_state:
-    st.session_state.lista_operatori = ["Dr. Popescu", "Dr. Ionescu", "Dr. Georgescu"]
+    st.session_state.lista_operatori = ["Dr. CRISAN", "Dr. OLARIU", "Dr. ZUS"]
 if 'protocoale_pci' not in st.session_state:
     st.session_state.protocoale_pci = []
 
@@ -41,7 +41,7 @@ with st.sidebar:
             st.session_state.lista_operatori.append(nou_op)
             st.rerun()
 
-    operator_secundar = st.text_input("Operator Secundar", placeholder="ex. Rezident / Asistent")
+    operator_secundar = st.text_input("Operator Secundar", placeholder="ex. ")
     
     st.markdown("---")
     col_p1, col_p2 = st.columns(2)
@@ -80,15 +80,14 @@ with tab1:
     with col_teh1:
         st.info("Cale de Abord & Materiale")
         c1, c2 = st.columns(2)
-        abord = c1.selectbox("Artera puncționată:", ["Radială Dreaptă", "Radială Stângă", "Femurală Dreaptă", "Femurală Stângă", "Brahială"])
-        teaca = c2.selectbox("Teacă (Sheath):", ["4F", "5F", "6F", "7F", "8F"], index=2)
+        abord = c1.selectbox("Abord", ["radial dreapt", "radial stâng", "femural dreapt", "femural stâng", "brahial"])
+        teaca = c2.selectbox("Teacă:", ["4F", "5F", "6F", "7F", "8F"], index=2)
         
         catetere_dg = st.text_area("Catetere Diagnostic:", "JL 3.5, JR 4.0", height=68)
         
         st.markdown("##### Hemostază")
         hemostaza = st.selectbox("Metodă închidere:", ["Compresie Manuală", "TR Band (Pneumatic)", "AngioSeal", "Perclose ProGlide", "Femostop"])
-        staza_detalii = st.text_input("Detalii hemostază (opțional):", placeholder="ex. scos teaca la 4h")
-
+        
     with col_teh2:
         st.info("Hemodinamică & Radioscopie")
         h1, h2 = st.columns(2)
@@ -107,7 +106,7 @@ with tab1:
 with tab2:
     st.write("Selectați segmentele cu leziuni pentru a le edita detaliile.")
     
-    dominanta = st.radio("Dominanță Coronariană:", ["Dreaptă (RCA)", "Stângă (LCA)", "Echilibrată"], horizontal=True)
+    dominanta = st.radio("Dominanță :", ["Dreaptă", "Stângă", "Echilibrată"], horizontal=True)
     st.markdown("---")
 
     # Dictionar pentru stocarea datelor despre leziuni
