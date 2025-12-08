@@ -234,11 +234,11 @@ with tab4:
         lines.append(f"Abord: {abord} ({teaca}) - Hemostaza: {hemostaza} {f'({staza_detalii})' if staza_detalii else ''}")
         lines.append(f"Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml - TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
         lines.append(f"Catetere: {catetere_dg}")
-                lines.append("")
+        lines.append("")
 
         lines.append("DESCRIERE ANGIOGRAFICA")
         lines.append(f"Dominanta: {dominanta}")
-                lines.append("")
+        lines.append("")
 
         if not lesion_data:
             lines.append("Fara leziuni semnificative angiografic pe segmentele analizate.")
