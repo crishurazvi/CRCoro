@@ -26,7 +26,7 @@ if 'protocoale_pci' not in st.session_state:
 
 # --- SIDEBAR: DATE GENERALE ---
 with st.sidebar:
-    st.title("🫀 CardioReport RO")
+    st.title("CardioReport RO")
     st.markdown("---")
     st.header("1. Date Pacient")
     
@@ -65,10 +65,10 @@ with st.sidebar:
 
 # --- TAB-uri ---
 tab1, tab2, tab3, tab4 = st.tabs([
-    "📍 1. Abord & Tehnică", 
-    "🫀 2. Anatomie & Leziuni", 
-    "🎈 3. Angioplastie (PCI)", 
-    "📄 4. Raport Final"
+    "1. Abord & Tehnică", 
+    "2. Anatomie & Leziuni", 
+    "3. Angioplastie (PCI)", 
+    "4. Raport Final"
 ])
 
 # ==========================================
