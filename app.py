@@ -60,7 +60,7 @@ with st.sidebar:
         default=[])
     
     st.subheader("Indicație")
-    indicatie = st.selectbox("Motiv:", 
+    indicatie = st.selectbox("", 
         ["Angină Stabilă", "Angină Instabilă", "NSTEMI", "STEMI", "Pre-operator", "Control (Stent/Bypass)", "Insuficiență Cardiacă", "Test de ischemie pozitiv"])
 
 # --- TAB-uri ---
@@ -246,7 +246,6 @@ with tab4:
             for key, data in sorted_lesions:
                 # key format: "Vas - Segment"
                 lines.append(f" - {key}: Leziune stenozanta {data['stenosis']}%, flux distal Tip {data['type']}. {data['desc']}")
-                lines.append("")
 
         if st.session_state.protocoale_pci:
             lines.append("ANGIOPLASTIE (PCI):")
