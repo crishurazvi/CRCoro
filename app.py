@@ -4,7 +4,7 @@ from datetime import datetime
 # --- CONFIGURARE PAGINĂ ---
 st.set_page_config(
     page_title="CardioReport RO - Protocol Coronarografie",
-    page_icon="🫀",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -28,7 +28,7 @@ if 'protocoale_pci' not in st.session_state:
 with st.sidebar:
     st.title("CardioReport RO")
     st.markdown("---")
-    st.header("1. Date Pacient")
+    st.header("Date Pacient")
     
     # Adăugare Operator Dinamic
     col_op1, col_op2 = st.columns([3, 1])
@@ -55,8 +55,7 @@ with st.sidebar:
     data_proc = st.date_input("Data Procedurii", datetime.today())
     
     st.subheader("Factori de Risc")
-    risc = st.multiselect("Factori:", 
-        ["HTA", "Diabet Zaharat", "Dyslipidemie", "Fumat", "Obezitate", "Heredocolaterale", "Insuf. Renală", "Fost fumător"],
+    risc = st.multiselect(["HTA", "Diabet Zaharat", "Dyslipidemie", "Fumat", "Obezitate", "Heredocolaterale", "Insuf. Renală", "Fost fumător"],
         default=[])
     
     st.subheader("Indicație")
