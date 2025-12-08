@@ -229,7 +229,7 @@ with tab4:
         
         lines.append(f"Pacient: {nume_pacient} - Varsta: {varsta} ani - FO: {fo}; Factori de Risc: {', '.join(risc) if risc else 'Negativi'}")
         lines.append(f"Indicatie: {indicatie}")
-        lines.append(f"Abord: {abord} ({teaca}) - Hemostaza: {hemostaza} {f'({staza_detalii})' if staza_detalii else ''}")
+        lines.append(f"Abord: {abord} ({teaca})")
         lines.append(f"Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml - TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
         lines.append(f"Catetere: {catetere_dg}")
         lines.append("")
