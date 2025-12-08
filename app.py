@@ -224,30 +224,23 @@ with tab4:
     # GENERATOR TEXT (FĂRĂ MARKDOWN)
     def generate_plain_text():
         lines = []
-        lines.append(f"PROTOCOL DE CORONAROGRAFIE {'SI ANGIOPLASTIE' if st.session_state.protocoale_pci else ''}")
-        lines.append(f"Unitatea: Laborator Cateterism Cardiac")
+        lines.append(f"PROTOCOL CORONAROGRAFIE {'SI ANGIOPLASTIE' if st.session_state.protocoale_pci else ''}")
+        lines.append(f"Laborator Cateterism Cardiac")
         lines.append(f"Data: {data_proc.strftime('%d/%m/%Y')} | ID Procedura: {id_procedura}")
-        lines.append(f"Operator: {operator_selectat} | Secundar: {operator_secundar}")
-        lines.append("-" * 40)
+        lines.append(f"Operator: {operator_selectat} | Secundar: {operator_secundar}")   
         
-        lines.append("1. DATE PACIENT")
         lines.append(f"Nume: {nume_pacient} | Varsta: {varsta} ani | FO: {fo}")
         lines.append(f"Factori de Risc: {', '.join(risc) if risc else 'Negativi'}")
         lines.append(f"Indicatie: {indicatie}")
         lines.append("")
-        
-        lines.append("2. DETALII PROCEDURALE")
         lines.append(f"Abord: {abord} ({teaca})")
         lines.append(f"Hemostaza: {hemostaza} {f'({staza_detalii})' if staza_detalii else ''}")
         lines.append(f"Hemodinamica: TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
         lines.append(f"Parametri: Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml")
         lines.append(f"Catetere: {catetere_dg}")
-        lines.append("-" * 40)
         
-        lines.append("3. DESCRIERE ANGIOGRAFICA")
+        lines.append("DESCRIERE ANGIOGRAFICA")
         lines.append(f"Dominanta: {dominanta}")
-        lines.append(f"FLUX TIMI: TC[{tc_flow}] IVA[{iva_flow}] Cx[{cx_flow}] CD[{rca_flow}]")
-        lines.append("")
         
         if not lesion_data:
             lines.append("Fara leziuni semnificative angiografic pe segmentele analizate.")
@@ -260,21 +253,11 @@ with tab4:
                 lines.append(f" - {key}: Stenoza {data['stenosis']}%, Tip {data['type']}. {data['desc']}")
         
         if st.session_state.protocoale_pci:
-            lines.append("-" * 40)
-            lines.append("4. PROTOCOL ANGIOPLASTIE (PCI)")
+            lines.append("PROTOCOL ANGIOPLASTIE (PCI)")
             for item in st.session_state.protocoale_pci:
                 lines.append(f"VAS TRATAT: {item['artera']}")
                 lines.append(f"Protocol: {item['text']}")
                 lines.append("")
-        
-        lines.append("-" * 40)
-        lines.append("5. CONCLUZII")
-        lines.append(concluzie_finala)
-        lines.append("")
-        lines.append("6. RECOMANDARI")
-        lines.append(", ".join(recomandari_list))
-        lines.append("Tratament medicamentos:")
-        lines.append(tratament_text)
         
         return "\n".join(lines)
 
