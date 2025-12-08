@@ -80,7 +80,7 @@ with tab1:
     with col_teh1:
         st.info("Cale de Abord & Materiale")
         c1, c2 = st.columns(2)
-        abord = c1.selectbox("Abord", ["radial dreapt", "radial stâng", "femural dreapt", "femural stâng", "brahial"])
+        abord = c1.selectbox("Abord", ["radial drept", "radial stâng", "femural drept", "femural stâng", "brahial"])
         teaca = c2.selectbox("Teacă:", ["4F", "5F", "6F", "7F", "8F"], index=2)
         
         catetere_dg = st.text_area("Catetere Diagnostic:", "JL 3.5, JR 4.0", height=68)
