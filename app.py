@@ -228,8 +228,7 @@ with tab4:
         lines.append(f"Data: {data_proc.strftime('%d/%m/%Y')} | ID Procedura: {id_procedura} - {operator_selectat} | Secundar: {operator_secundar}")
         lines.append("")
         
-        lines.append(f"Pacient: {nume_pacient} - Varsta: {varsta} ani - FO: {fo}")
-        lines.append(f"Factori de Risc: {', '.join(risc) if risc else 'Negativi'}")
+        lines.append(f"Pacient: {nume_pacient} - Varsta: {varsta} ani - FO: {fo}; Factori de Risc: {', '.join(risc) if risc else 'Negativi'}")
         lines.append(f"Indicatie: {indicatie}")
         lines.append(f"Abord: {abord} ({teaca}) - Hemostaza: {hemostaza} {f'({staza_detalii})' if staza_detalii else ''}")
         lines.append(f"Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml - TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
@@ -237,24 +236,23 @@ with tab4:
         lines.append("")
 
         lines.append("DESCRIERE ANGIOGRAFICA")
-        lines.append(f"Dominanta: {dominanta}")
+        lines.append(f"Dominanta {dominanta}")
         lines.append("")
 
         if not lesion_data:
             lines.append("Fara leziuni semnificative angiografic pe segmentele analizate.")
         else:
-            lines.append("LEZIUNI IDENTIFICATE:")
             # Grupare dupa vas pentru claritate in text
             sorted_lesions = sorted(lesion_data.items()) 
             for key, data in sorted_lesions:
                 # key format: "Vas - Segment"
-                lines.append(f" - {key}: Stenoza {data['stenosis']}%, Tip {data['type']}. {data['desc']}")
+                lines.append(f" - {key}: Leziune stenozanta {data['stenosis']}%, Tip {data['type']}. {data['desc']}")
         
         if st.session_state.protocoale_pci:
             lines.append("PROTOCOL ANGIOPLASTIE (PCI)")
             for item in st.session_state.protocoale_pci:
-                lines.append(f"VAS TRATAT: {item['artera']}")
-                lines.append(f"Protocol: {item['text']}")
+                lines.append(f"Protocol angioplastie {item['artera']}")
+                lines.append(f"{item['text']}")
                 lines.append("")
         
         return "\n".join(lines)
