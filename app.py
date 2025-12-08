@@ -55,7 +55,8 @@ with st.sidebar:
     data_proc = st.date_input("Data Procedurii", datetime.today())
     
     st.subheader("Factori de Risc")
-    risc = st.multiselect(["HTA", "Diabet Zaharat", "Dyslipidemie", "Fumat", "Obezitate", "Heredocolaterale", "Insuf. Renală", "Fost fumător"],
+    risc = st.multiselect("",
+            ["HTA", "Diabet Zaharat", "Dyslipidemie", "Fumat", "Obezitate", "Heredocolaterale", "Insuf. Renală", "Fost fumător"],
         default=[])
     
     st.subheader("Indicație")
