@@ -1,264 +1,296 @@
 import streamlit as st
 from datetime import datetime
 
-# --- CONFIGURARE PAGINĂ ---
+# ==========================================
+# 1. CONFIGURARE & TEMĂ UI
+# ==========================================
 st.set_page_config(
-    page_title="CardioReport RO - Protocol Coronarografie",
-    page_icon="",
+    page_title="CardioReport RO | Protocol Coronarografie",
+    page_icon="🫀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- STILIZARE CSS (Pt. a maximiza spațiul și a curăța interfața) ---
+# --- CSS PERSONALIZAT PENTRU ASPECT ULTRA-MODERN ---
 st.markdown("""
     <style>
-    .block-container {padding-top: 1rem; padding-bottom: 2rem;}
-    h1 {font-size: 2rem !important;}
-    h3 {font-size: 1.4rem !important;}
+    /* Import Font Modern */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Modificare Header & Padding */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+    }
+    
+    /* Input-uri stilizate */
+    .stTextInput > div > div > input, .stNumberInput > div > div > input, .stSelectbox > div > div > div {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    /* Tabs stilizate */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 20px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 0 20px;
+        font-weight: 600;
+        color: #555;
+    }
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background-color: #007bff; /* Albastru Medical */
+        color: white;
+    }
+
+    /* Titluri */
+    h1, h2, h3 {
+        color: #2c3e50;
+    }
+    
+    /* Card-uri Custom */
+    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# --- SESSION STATE (Memorie temporară) ---
+# --- SESSION STATE ---
 if 'lista_operatori' not in st.session_state:
     st.session_state.lista_operatori = ["Dr. CRISAN", "Dr. OLARIU", "Dr. ZUS"]
 if 'protocoale_pci' not in st.session_state:
     st.session_state.protocoale_pci = []
 
-# --- SIDEBAR: DATE GENERALE ---
+# ==========================================
+# 2. SIDEBAR - DATE GENERALE
+# ==========================================
 with st.sidebar:
+    st.image("https://img.icons8.com/color/96/heart-with-pulse.png", width=60)
     st.title("CardioReport RO")
+    st.caption("v2.0 • Laborator Cateterism")
     st.markdown("---")
-    st.header("Date Pacient")
     
-    # Adăugare Operator Dinamic
-    col_op1, col_op2 = st.columns([3, 1])
-    with col_op1:
-        operator_selectat = st.selectbox("Operator Principal", st.session_state.lista_operatori, index=0)
-    with col_op2:
-        # Buton mic pentru a simula adăugarea (în realitate ar trebui bază de date)
-        nou_op = st.text_input("Nou", label_visibility="collapsed", placeholder="+")
-        if nou_op and nou_op not in st.session_state.lista_operatori:
-            st.session_state.lista_operatori.append(nou_op)
-            st.rerun()
+    with st.container(border=True):
+        st.markdown("**🧑‍⚕️ Echipa Medicală**")
+        col_op1, col_op2 = st.columns([4, 1])
+        with col_op1:
+            operator_selectat = st.selectbox("Operator Principal", st.session_state.lista_operatori, index=0)
+        with col_op2:
+            nou_op = st.text_input("Add", label_visibility="collapsed", placeholder="+")
+            if nou_op and nou_op not in st.session_state.lista_operatori:
+                st.session_state.lista_operatori.append(nou_op)
+                st.rerun()
+        operator_secundar = st.text_input("Operator Secundar", placeholder="Opțional")
 
-    operator_secundar = st.text_input("Operator Secundar", placeholder="ex. ")
-    
-    st.markdown("---")
-    col_p1, col_p2 = st.columns(2)
-    with col_p1:
-        nume_pacient = st.text_input("Nume Pacient", placeholder="Nume Prenume")
-        fo = st.text_input("Nr. Foaie (FO)")
-    with col_p2:
-        varsta = st.number_input("Vârstă", 18, 110, 60)
-        id_procedura = st.text_input("ID Procedură", placeholder="ex. 2024-1023")
+    with st.container(border=True):
+        st.markdown("**👤 Identificare Pacient**")
+        nume_pacient = st.text_input("Nume & Prenume", placeholder="EX: POPESCU ION")
+        col_p1, col_p2 = st.columns(2)
+        with col_p1:
+            fo = st.text_input("Foaie (FO)", placeholder="12345")
+        with col_p2:
+            varsta = st.number_input("Vârstă", 18, 110, 60)
+        id_procedura = st.text_input("ID Procedură", value=f"PROC-{datetime.now().strftime('%Y%m%d')}")
+        data_proc = st.date_input("Data", datetime.today())
 
-    data_proc = st.date_input("Data Procedurii", datetime.today())
-    
-    st.subheader("Factori de Risc")
-    risc = st.multiselect("",
-            ["HTA", "Diabet Zaharat", "Dyslipidemie", "Fumat", "Obezitate", "Heredocolaterale", "Insuf. Renală", "Fost fumător"],
-        default=[])
-    
-    st.subheader("Indicație")
-    indicatie = st.selectbox("", 
-        ["Angină Stabilă", "Angină Instabilă", "NSTEMI", "STEMI", "Pre-operator", "Control (Stent/Bypass)", "Insuficiență Cardiacă", "Test de ischemie pozitiv"])
+    with st.expander("⚠️ Factori de Risc & Indicație", expanded=False):
+        risc = st.multiselect("Factori Risc",
+                ["HTA", "Diabet Zaharat", "Dyslipidemie", "Fumat", "Obezitate", "AHC", "IRC"],
+            default=[])
+        indicatie = st.selectbox("Indicație Clinică", 
+            ["Angină Stabilă", "Angină Instabilă", "NSTEMI", "STEMI", "Ischemie Silențioasă", "Control Post-PCI", "Pre-operator Valvular"])
 
-# --- TAB-uri ---
+# ==========================================
+# 3. ZONA PRINCIPALĂ (TABS)
+# ==========================================
+
+# Header Principal
+st.markdown(f"### 📋 Protocol Procedură: **{nume_pacient if nume_pacient else 'Pacient Nou'}**")
+
 tab1, tab2, tab3, tab4 = st.tabs([
-    "1. Abord & Tehnică", 
-    "2. Anatomie & Leziuni", 
-    "3. Angioplastie (PCI)", 
-    "4. Raport Final"
+    "🛠️ 1. Abord & Tehnică", 
+    "🫀 2. Anatomie & Leziuni", 
+    "💉 3. Angioplastie (PCI)", 
+    "📄 4. Raport Final"
 ])
 
-# ==========================================
-# TAB 1: ABORD & HEMODINAMICĂ
-# ==========================================
+# --- TAB 1: ABORD & HEMODINAMICĂ ---
 with tab1:
-    col_teh1, col_teh2 = st.columns(2)
+    col_t1, col_t2 = st.columns(2)
     
-    with col_teh1:
-        st.info("Cale de Abord & Materiale")
-        c1, c2 = st.columns(2)
-        abord = c1.selectbox("Abord", ["radial drept", "radial stâng", "femural drept", "femural stâng", "brahial"])
-        teaca = c2.selectbox("Teacă:", ["4F", "5F", "6F", "7F", "8F"], index=2)
-        
-        catetere_dg = st.text_area("Catetere Diagnostic:", "JL 3.5, JR 4.0", height=68)
-        
-        st.markdown("##### Hemostază")
-        hemostaza = st.selectbox("Metodă închidere:", ["Compresie Manuală", "TR Band (Pneumatic)", "AngioSeal", "Perclose ProGlide", "Femostop"])
-        
-    with col_teh2:
-        st.info("Hemodinamică & Radioscopie")
-        h1, h2 = st.columns(2)
-        ao = h1.text_input("TA Aortă (mmHg):", "120/80")
-        lvedp = h2.text_input("LVEDP (mmHg):", "10")
-        
-        st.markdown("---")
-        r1, r2, r3 = st.columns(3)
-        contrast = r1.number_input("Contrast (ml):", value=80, step=10)
-        scopie = r2.number_input("Scopie (min):", value=5.0, step=0.5)
-        dap = r3.number_input("DAP (Gy.cm2):", value=40.0, step=1.0)
+    with col_t1:
+        with st.container(border=True):
+            st.markdown("#### 📍 Abord Vascular")
+            c1, c2 = st.columns(2)
+            abord = c1.selectbox("Loc Puncție", ["Radial Drept", "Radial Stâng", "Femural Drept", "Femural Stâng", "Brahial"])
+            teaca = c2.selectbox("Teacă (Sheath)", ["4F", "5F", "6F", "7F", "8F"], index=2)
+            
+            st.markdown("#### 🩹 Hemostază")
+            hemostaza = st.selectbox("Metodă", ["Compresie Manuală", "TR Band (Pneumatic)", "AngioSeal", "Perclose ProGlide", "Femostop"], index=1)
+            
+            st.markdown("#### 🔧 Materiale Diagnostic")
+            catetere_dg = st.text_area("Catetere Utilizate", "JL 3.5, JR 4.0", help="Editați dacă s-au folosit curbe atipice")
 
-# ==========================================
-# TAB 2: ANATOMIE (SISTEMATIZATĂ)
-# ==========================================
+    with col_t2:
+        with st.container(border=True):
+            st.markdown("#### 📊 Parametri Procedurali")
+            
+            sub_c1, sub_c2 = st.columns(2)
+            ao = sub_c1.text_input("TA Aortă (mmHg)", "120/80")
+            lvedp = sub_c2.text_input("LVEDP (mmHg)", "10")
+            
+            st.divider()
+            
+            r1, r2, r3 = st.columns(3)
+            contrast = r1.number_input("Contrast (ml)", value=80, step=10)
+            scopie = r2.number_input("Scopie (min)", value=5.0, step=0.5)
+            dap = r3.number_input("DAP (Gy.cm2)", value=40.0, step=1.0)
+            
+            st.info(f"💡 **Total Iradiere:** {dap} Gy.cm2 | **Volum Contrast:** {contrast} ml", icon="☢️")
+
+# --- TAB 2: ANATOMIE (SISTEMATIZATĂ) ---
 with tab2:
-    st.write("Selectați segmentele cu leziuni pentru a le edita detaliile.")
-    
-    dominanta = st.radio("Dominanță :", ["Dreaptă", "Stângă", "Echilibrată"], horizontal=True)
-    st.markdown("---")
+    st.markdown("##### Configurație Coronariană")
+    dominanta = st.radio("Dominanță:", ["Dreaptă", "Stângă", "Echilibrată"], horizontal=True)
+    st.divider()
 
-    # Dictionar pentru stocarea datelor despre leziuni
     lesion_data = {}
 
-    def render_vessel_section(vessel_name, segments, key_prefix):
-        """Genereaza UI pentru un vas si segmentele sale"""
-        with st.expander(f"📌 {vessel_name}", expanded=False):
-            # Flux general
-            flux_global = st.selectbox(f"Flux TIMI general ({vessel_name}):", ["TIMI 3", "TIMI 2", "TIMI 1", "TIMI 0"], key=f"flow_{key_prefix}")
+    def vessel_card(title, segments, key_prefix, color="#f0f2f6"):
+        with st.container(border=True):
+            col_head, col_flow = st.columns([3, 1])
+            col_head.markdown(f"### {title}")
+            flux_val = col_flow.selectbox(f"Flux {key_prefix}", ["TIMI 3", "TIMI 2", "TIMI 1", "TIMI 0"], label_visibility="collapsed")
             
-            st.markdown(f"**Leziuni Segmentare ({vessel_name})**")
-            
-            # Iterăm prin segmente
-            for seg in segments:
-                is_diseased = st.checkbox(f"{seg}", key=f"chk_{key_prefix}_{seg}")
-                if is_diseased:
-                    c1, c2, c3 = st.columns([1, 2, 1])
-                    stenosis = c1.slider(f"% Stenoză ({seg})", 10, 100, 70, 5, key=f"st_{key_prefix}_{seg}")
-                    desc = c2.text_input(f"Descriere ({seg})", placeholder="ex. excentrică, calcificată", key=f"desc_{key_prefix}_{seg}")
-                    lesion_type = c3.selectbox("Tip", ["A", "B1", "B2", "C"], key=f"type_{key_prefix}_{seg}")
-                    
-                    # Salvăm datele dacă există leziune
-                    lesion_data[f"{vessel_name} - {seg}"] = {
-                        "stenosis": stenosis,
-                        "desc": desc,
-                        "type": lesion_type
-                    }
-            return flux_global
+            # Segmente Expandabile
+            with st.expander(f"🔽 Detalii Leziuni {title}", expanded=False):
+                for seg in segments:
+                    is_active = st.checkbox(f"Leziune: {seg}", key=f"chk_{key_prefix}_{seg}")
+                    if is_active:
+                        c1, c2, c3 = st.columns([2, 3, 2])
+                        sten = c1.slider(f"% Stenoză ({seg})", 30, 99, 70, 5, key=f"sld_{key_prefix}_{seg}")
+                        desc = c2.text_input(f"Morphologie ({seg})", placeholder="ex. calcificată, excentrică", key=f"txt_{key_prefix}_{seg}")
+                        type_l = c3.selectbox("Tip ACC/AHA", ["A", "B1", "B2", "C"], key=f"typ_{key_prefix}_{seg}")
+                        
+                        lesion_data[f"{title} - {seg}"] = {"stenosis": sten, "desc": desc, "type": type_l}
+            return flux_val
 
-    # 1. TRUNCHI COMUN
-    tc_flow = render_vessel_section("Trunchi Comun (LM)", ["Ostium", "Corp", "Bifurcație distală"], "LM")
+    col_left, col_right = st.columns(2)
+    
+    with col_left:
+        lm_flow = vessel_card("Trunchi Comun (LM)", ["Ostium", "Corp", "Distal"], "LM")
+        iva_flow = vessel_card("Artera Descendentă Ant. (LAD)", ["Ostium", "Proximal", "Mediu", "Distal", "D1", "D2"], "LAD")
+        cx_flow = vessel_card("Artera Circumflexă (LCX)", ["Ostium", "Proximal", "Distal", "OM1", "OM2"], "LCX")
+        
+    with col_right:
+        rca_flow = vessel_card("Coronara Dreaptă (RCA)", ["Ostium", "Proximal", "Mediu", "Distal", "IVP", "PL"], "RCA")
+        byp_flow = vessel_card("Grefe / Bypass", ["LIMA", "RIMA", "SVG-RCA", "SVG-Cx"], "BYP")
 
-    # 2. IVA (LAD)
-    c1, c2 = st.columns(2)
-    with c1:
-        iva_flow = render_vessel_section("Artera Interventriculară Ant. (IVA/LAD)", 
-                                         ["Ostium", "Proximal", "Mediu", "Distal", "Diagonală 1 (D1)", "Diagonală 2 (D2)"], "LAD")
-    with c2:
-    # 3. CIRCUMFLEXA (LCX)
-        cx_flow = render_vessel_section("Artera Circumflexă (Cx/LCX)", 
-                                        ["Ostium", "Proximal", "Mediu", "Distal", "Marginală 1 (OM1)", "Marginală 2 (OM2)", "Intermediara"], "LCX")
-
-    # 4. CORONARA DREAPTA (RCA)
-    rca_flow = render_vessel_section("Coronara Dreaptă (CD/RCA)", 
-                                     ["Ostium", "Proximal", "Mediu", "Distal", "IVP (PDA)", "Postero-Laterală (PL)"], "RCA")
-
-    # 5. ALTELE
-    byp_flow = render_vessel_section("Bypass-uri / Altele", ["LIMA la IVA", "RIMA", "Venous Graft la CD", "Venous Graft la Cx"], "BYP")
-
-# ==========================================
-# TAB 3: ANGIOPLASTIE (PROTOCOL DINAMIC)
-# ==========================================
+# --- TAB 3: ANGIOPLASTIE (PCI) ---
 with tab3:
-    st.info("Adăugați protocolul pentru fiecare arteră tratată, pe rând.")
+    col_input, col_display = st.columns([1, 1.5])
     
-    col_pci1, col_pci2 = st.columns([1, 2])
-    
-    with col_pci1:
-        pci_artera = st.selectbox("1. Alege Artera tratată:", ["-", "TC (LM)", "IVA (LAD)", "Cx (LCX)", "CD (RCA)", "Diagonală", "Marginală", "Bypass"])
-        pci_text = st.text_area("2. Scrie Protocolul (Manual):", height=200, placeholder="Ex: Ghidare cu EBU 3.5. Trecut ghid Sion Blue. Predilatare balon 2.5x15. Implantare stent DES 3.0x28mm la 12atm. Postdilatare NC 3.25x12 la 18atm. Rezultat final bun, flux TIMI 3.")
-        
-        if st.button("➕ Adaugă Protocol Artera"):
-            if pci_artera != "-" and pci_text:
-                st.session_state.protocoale_pci.append({"artera": pci_artera, "text": pci_text})
-                st.success(f"Protocol pentru {pci_artera} adăugat!")
-            else:
-                st.error("Selectează artera și scrie textul.")
-        
-        if st.button("🗑️ Șterge tot (Reset PCI)"):
-            st.session_state.protocoale_pci = []
-            st.rerun()
+    with col_input:
+        with st.container(border=True):
+            st.markdown("#### ➕ Adăugare Protocol")
+            pci_artera = st.selectbox("Artera Tratată", ["TC (LM)", "IVA (LAD)", "Cx (LCX)", "CD (RCA)", "Diagonală", "Marginală", "Bypass"])
+            pci_text = st.text_area("Descriere Procedură", height=150, placeholder="Ex: Ghidare EBU 3.5 6F. Predilatare NC 2.5x15. Stent DES 3.0x28 la 14atm. Postdilatare...")
+            
+            if st.button("Adaugă în Raport", type="primary", use_container_width=True):
+                if pci_text:
+                    st.session_state.protocoale_pci.append({"artera": pci_artera, "text": pci_text, "time": datetime.now().strftime("%H:%M")})
+                    st.success("Adăugat!")
+                else:
+                    st.warning("Scrieți protocolul înainte de a adăuga.")
 
-    with col_pci2:
-        st.subheader("Protocoale introduse:")
+            if st.button("Reset Tot", type="secondary", use_container_width=True):
+                st.session_state.protocoale_pci = []
+                st.rerun()
+
+    with col_display:
+        st.markdown("#### 📜 Jurnal Procedură")
         if not st.session_state.protocoale_pci:
-            st.write("Nu s-au introdus date de angioplastie.")
+            st.info("Nicio intervenție înregistrată încă.")
         else:
-            for idx, item in enumerate(st.session_state.protocoale_pci):
+            for i, item in enumerate(st.session_state.protocoale_pci):
                 st.markdown(f"""
-                <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-bottom: 10px; color: black;">
-                    <strong>{idx+1}. Artera: {item['artera']}</strong><br>
-                    {item['text']}
+                <div style="background-color: #f1f3f4; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #007bff;">
+                    <small style="color: #666;">{item['time']} • <strong>{item['artera']}</strong></small><br>
+                    <span style="font-size: 15px;">{item['text']}</span>
                 </div>
                 """, unsafe_allow_html=True)
 
-# ==========================================
-# TAB 4: RAPORT FINAL (PLAIN TEXT)
-# ==========================================
+# --- TAB 4: RAPORT FINAL ---
 with tab4:
-    st.header("Raport Final")
+    st.markdown("### Generare Raport Final")
     
-    # Concluzii (Editabile)
-    st.subheader("Concluzii & Recomandări")
-    
-    # Generare sugestie concluzie
-    sugestie_concluzie = "Coronare angiografic normale."
+    # Logică Concluzii Auto
+    default_concluzie = "Coronare angiografic normale."
     if lesion_data:
-        sugestie_concluzie = "Boală coronariană semnificativă " + ("uni/bi/tri-vasculară.")
+        default_concluzie = "Boală coronariană semnificativă."
     if st.session_state.protocoale_pci:
-        sugestie_concluzie = f"Angioplastie coronariană cu succes la nivelul {', '.join([p['artera'] for p in st.session_state.protocoale_pci])}."
+        vessels = list(set([x['artera'] for x in st.session_state.protocoale_pci]))
+        default_concluzie = f"Angioplastie coronariană cu implant de stent la nivelul: {', '.join(vessels)}."
 
-    concluzie_finala = st.text_area("Concluzii:", value=sugestie_concluzie, height=80)
-    
-    # Recomandari
-    recomandari_list = st.multiselect("Recomandări:", 
-        ["Tratament Medical Optimal", "DAPT (Aspirină+Clopidogrel)", "DAPT (Aspirină+Ticagrelor)", "Revascularizare Chirurgicală (CABG)", "Control la 1 an", "Ecocardiografie", "Oprire fumat"],
-        default=["Tratament Medical Optimal"])
-    
-    tratament_text = st.text_area("Tratament la externare:", "Aspirina 75mg 1-0-0\nAtorvastatina 80mg 0-0-1", height=80)
+    col_c1, col_c2 = st.columns(2)
+    with col_c1:
+        concluzie_finala = st.text_area("Concluzii", value=default_concluzie, height=100)
+    with col_c2:
+        recomandari_list = st.multiselect("Recomandări Standard", 
+            ["Tratament Medical Optimal", "DAPT 12 luni", "DAPT 6 luni", "DAPT 1 lună", "CABG", "Control la 1 an", "Ecocardiografie"],
+            default=["Tratament Medical Optimal"])
+        rx_text = st.text_input("Tratament la externare", "Aspirina 75mg, Clopidogrel 75mg, Statina")
 
-    st.markdown("---")
-    
-    # GENERATOR TEXT (FĂRĂ MARKDOWN)
-    def generate_plain_text():
-        lines = []
-        lines.append(f"PROTOCOL CORONAROGRAFIE {'SI ANGIOPLASTIE' if st.session_state.protocoale_pci else ''} - Laborator Cateterism Cardiac")
-        lines.append(f"Data: {data_proc.strftime('%d/%m/%Y')} | ID Procedura: {id_procedura} - {operator_selectat} | Secundar: {operator_secundar}")
-        lines.append("")
+    # GENERATOR TEXT
+    def build_report():
+        lines = [
+            f"CLINICA DE CARDIOLOGIE - LABORATOR CATETERISM",
+            f"PROTOCOL PROCEDURAL: {'ANGIOPLASTIE' if st.session_state.protocoale_pci else 'CORONAROGRAFIE'}",
+            f"--------------------------------------------------",
+            f"Data: {data_proc.strftime('%d/%m/%Y')} | ID: {id_procedura}",
+            f"Pacient: {nume_pacient} ({varsta} ani) | FO: {fo}",
+            f"Echipa: {operator_selectat} / {operator_secundar}",
+            f"Indicatie: {indicatie} | Risc: {', '.join(risc)}",
+            f"",
+            f"DETALII TEHNICE:",
+            f"- Abord: {abord} ({teaca})",
+            f"- Contrast: {contrast} ml | Iradiere: {dap} Gy.cm2",
+            f"- Hemodinamica: TA {ao} mmHg | LVEDP {lvedp} mmHg",
+            f"",
+            f"DESCRIERE ANGIOGRAFICĂ (Dominanță {dominanta}):"
+        ]
         
-        lines.append(f"Pacient: {nume_pacient} - Varsta: {varsta} ani - FO: {fo}; Factori de Risc: {', '.join(risc) if risc else 'Negativi'}")
-        lines.append(f"Indicatie: {indicatie}")
-        lines.append(f"Abord: {abord} ({teaca})")
-        lines.append(f"Scopie {scopie} min | DAP {dap} Gy.cm2 | Contrast {contrast} ml - TA Ao: {ao} mmHg, LVEDP: {lvedp} mmHg")
-        lines.append(f"Catetere: {catetere_dg}")
-        lines.append("")
-
-        lines.append("DESCRIERE ANGIOGRAFICA")
-        lines.append(f"Dominanta {dominanta}")
-        lines.append("")
-
         if not lesion_data:
-            lines.append("Fara leziuni semnificative angiografic pe segmentele analizate.")
+            lines.append("- Fără leziuni semnificative angiografic.")
         else:
-            # Grupare dupa vas pentru claritate in text
-            sorted_lesions = sorted(lesion_data.items()) 
-            for key, data in sorted_lesions:
-                # key format: "Vas - Segment"
-                lines.append(f" - {key}: Leziune stenozanta {data['stenosis']}%, flux distal Tip {data['type']}. {data['desc']}")
-
+            for k, v in lesion_data.items():
+                lines.append(f"- {k}: Stenoză {v['stenosis']}%, {v['desc']} (Tip {v['type']})")
+        
         if st.session_state.protocoale_pci:
-            lines.append("ANGIOPLASTIE (PCI):")
-            for item in st.session_state.protocoale_pci:
-                lines.append(f"Protocol angioplastie {item['artera']}")
-                lines.append(f"{item['text']}")
-                lines.append("")
+            lines.append(f"\nPROCEDURA INTERVENȚIONALĂ (PCI):")
+            for p in st.session_state.protocoale_pci:
+                lines.append(f"> {p['artera']}: {p['text']}")
+        
+        lines.append(f"\nCONCLUZII: {concluzie_finala}")
+        lines.append(f"RECOMANDĂRI: {', '.join(recomandari_list)}")
+        lines.append(f"Rx la externare: {rx_text}")
         
         return "\n".join(lines)
 
-    raport_final = generate_plain_text()
+    raport_text = build_report()
     
-    st.text_area("Previzualizare Raport (Gata de printat):", value=raport_final, height=600)
+    st.text_area("Previzualizare", value=raport_text, height=400, help="Acest text poate fi copiat direct în fișa pacientului.")
     
-    # Buton de download (Streamlit nu are "Copy to clipboard" nativ fara componente extra, dar text area permite Ctrl+A, Ctrl+C usor)
-    st.download_button("💾 Descarcă Raport (.txt)", data=raport_final, file_name=f"Raport_{nume_pacient}_{id_procedura}.txt")
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
+    with col_btn1:
+        st.download_button("💾 Descarcă TXT", data=raport_text, file_name=f"{nume_pacient}_Raport.txt", mime="text/plain", use_container_width=True)
